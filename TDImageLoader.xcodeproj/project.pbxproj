@@ -16,6 +16,9 @@
 		28F4BB7D1CEFF4D3003AEA95 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28F4BB7B1CEFF4D3003AEA95 /* LaunchScreen.storyboard */; };
 		28F4BB881CEFF4D3003AEA95 /* TDImageLoaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BB871CEFF4D3003AEA95 /* TDImageLoaderTests.m */; };
 		28F4BB931CEFF4D3003AEA95 /* TDImageLoaderUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BB921CEFF4D3003AEA95 /* TDImageLoaderUITests.m */; };
+		28F4BBA61CEFF8CA003AEA95 /* TDImageDownloaderOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */; };
+		28F4BBA71CEFF8CA003AEA95 /* TDImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */; };
+		28F4BBA81CEFF8CA003AEA95 /* TDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +56,12 @@
 		28F4BB8E1CEFF4D3003AEA95 /* TDImageLoaderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDImageLoaderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		28F4BB921CEFF4D3003AEA95 /* TDImageLoaderUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDImageLoaderUITests.m; sourceTree = "<group>"; };
 		28F4BB941CEFF4D3003AEA95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		28F4BBA01CEFF8CA003AEA95 /* TDImageDownloaderOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDImageDownloaderOperation.h; sourceTree = "<group>"; };
+		28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDImageDownloaderOperation.m; sourceTree = "<group>"; };
+		28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDImageDownloader.h; sourceTree = "<group>"; };
+		28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDImageDownloader.m; sourceTree = "<group>"; };
+		28F4BBA41CEFF8CA003AEA95 /* TDImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDImageCache.h; sourceTree = "<group>"; };
+		28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDImageCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +116,12 @@
 				28F4BB6E1CEFF4D3003AEA95 /* AppDelegate.m */,
 				28F4BB701CEFF4D3003AEA95 /* ViewController.h */,
 				28F4BB711CEFF4D3003AEA95 /* ViewController.m */,
+				28F4BBA01CEFF8CA003AEA95 /* TDImageDownloaderOperation.h */,
+				28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */,
+				28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */,
+				28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */,
+				28F4BBA41CEFF8CA003AEA95 /* TDImageCache.h */,
+				28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */,
 				28F4BB731CEFF4D3003AEA95 /* Main.storyboard */,
 				28F4BB791CEFF4D3003AEA95 /* Assets.xcassets */,
 				28F4BB7B1CEFF4D3003AEA95 /* LaunchScreen.storyboard */,
@@ -277,6 +292,9 @@
 				28F4BB721CEFF4D3003AEA95 /* ViewController.m in Sources */,
 				28F4BB6F1CEFF4D3003AEA95 /* AppDelegate.m in Sources */,
 				28F4BB6C1CEFF4D3003AEA95 /* main.m in Sources */,
+				28F4BBA71CEFF8CA003AEA95 /* TDImageDownloader.m in Sources */,
+				28F4BBA61CEFF8CA003AEA95 /* TDImageDownloaderOperation.m in Sources */,
+				28F4BBA81CEFF8CA003AEA95 /* TDImageCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
