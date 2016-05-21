@@ -111,6 +111,12 @@
     if (toDisk) {
         
         dispatch_async(self.ioQueue, ^{
+            
+            
+            
+            
+            
+            
             NSFileManager *filemanager = [NSFileManager defaultManager];
             
             if (![filemanager fileExistsAtPath:_diskCachePath]) {
@@ -118,15 +124,9 @@
             }
             
             NSString *cachePathForKey = [self defaultCachePathForKey:key];
-            NSURL *fileURL = [NSURL fileURLWithPath:cachePathForKey];
             
-            NSError *error = nil;
-            [filemanager moveItemAtURL:location toURL:fileURL error:&error];
-            if (error) {
-                NSLog(@"error : %@",error.description);
-            }else{
-                NSLog(@"fileURL : %@",fileURL);
-            }
+            [filemanager createFileAtPath:cachePathForKey contents:data attributes:nil];
+            
 
         });
         
@@ -179,6 +179,8 @@
 - (UIImage *)imageFromMemoryCacheForKey:(NSString *)key{
     return [self.memCache objectForKey:key];
 }
+
+
 - (UIImage *)diskImageForKey:(NSString *)key{
     NSString *cachePath = [self defaultCachePathForKey:key];
     

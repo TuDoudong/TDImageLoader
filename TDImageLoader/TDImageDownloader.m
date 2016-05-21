@@ -45,14 +45,44 @@
                 progress:(TDImageDownloaderProgressBlock)progressBlock
                 complete:(TDImageDownloaderCompleteBlock)completedBlock{
     
+    if (!url || url == (id)kCFNull) {
+        return;
+    }
+    
+    if ([url isKindOfClass:NSString.class]) {
+        url = [NSURL URLWithString:(NSString *)url];
+    }
+    
+    // Prevents app crashing on argument type error like sending NSNull instead of NSURL
+    if (![url isKindOfClass:NSURL.class]) {
+        url = nil;
+    }
     
     
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue new]];
-    self.downURL = url;
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    self.downTask = [self.downloadSession downloadTaskWithRequest:request];
-    [self.downTask resume];
+    NSOperation *operation = [self.imageCache queryDiskCacheForKey:url.absoluteString done:^(UIImage *image, TDImageCacheType cacheType) {
+        if (operation.isCancelled) {
+            return ;
+        }
+        
+        if (image && cacheType) {
+            completedBlock(image,nil,nil,YES);
+        }else{
+            
+            NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+            self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue new]];
+            self.downURL = url;
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+            self.downTask = [self.downloadSession downloadTaskWithRequest:request];
+            [self.downTask resume];
+        
+        }
+        
+        
+    }];
+    
+    
+    
+    
     
     progressBlock = [self.progrssBlock copy];
     

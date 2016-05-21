@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+#import "TDImageDownloaderOperation.h"
+#import "TDImageDownloader.h"
 @interface ViewController ()
 
 @end
@@ -16,7 +18,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    TDImageDownloader *downloader = [TDImageDownloader shareDownloader];
+    
+    [downloader downloadImageFrom:[NSURL URLWithString:@"http://guidemark-img.b0.upaiyun.com/EruviTOL3e.jpg"] progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        NSLog(@"receivedSize :%ld",receivedSize);
+        NSLog(@"expectedSize : %ld",expectedSize);
+        
+        
+    } complete:^(UIImage *image, NSData *data, NSError *error, BOOL isfinished) {
+        
+    }];
+
 }
 
 - (void)didReceiveMemoryWarning {

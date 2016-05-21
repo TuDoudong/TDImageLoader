@@ -31,4 +31,10 @@ typedef void(^TDImageQueryCompletBlock)(UIImage *image ,TDImageCacheType cacheTy
 
 - (NSOperation *)queryDiskCacheForKey:(NSString *)key done:(TDImageQueryCompletBlock)doneBlock;
 
+
+
+//对应 key（url） 的本地地址
+- (NSString *)defaultCachePathForKey:(NSString *)key;
+
+
 @end
