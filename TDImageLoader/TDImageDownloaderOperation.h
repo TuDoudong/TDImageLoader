@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic, readonly) NSURLRequest *request;
 
+@property (assign, nonatomic) NSInteger expectedSize;
 
 
 - (instancetype)initWithRequest:(NSURLRequest *)request;

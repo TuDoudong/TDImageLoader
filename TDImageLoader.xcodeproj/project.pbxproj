@@ -436,6 +436,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = TDImageLoader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tudoudong.TDImageLoader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -447,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = TDImageLoader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tudoudong.TDImageLoader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -518,6 +520,7 @@
 				28F4BB991CEFF4D3003AEA95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		28F4BB9A1CEFF4D3003AEA95 /* Build configuration list for PBXNativeTarget "TDImageLoaderTests" */ = {
 			isa = XCConfigurationList;
@@ -526,6 +529,7 @@
 				28F4BB9C1CEFF4D3003AEA95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		28F4BB9D1CEFF4D3003AEA95 /* Build configuration list for PBXNativeTarget "TDImageLoaderUITests" */ = {
 			isa = XCConfigurationList;
@@ -534,6 +538,7 @@
 				28F4BB9F1CEFF4D3003AEA95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

@@ -8,13 +8,14 @@
 
 #import "TDImageDownloaderOperation.h"
 
-@interface TDImageDownloaderOperation ()<NSURLSessionDownloadDelegate>
+@interface TDImageDownloaderOperation ()<NSURLSessionDataDelegate>
 
-@property (nonatomic,copy) TDImageDownloaderProgressBlock progrssBlock;
+@property (nonatomic,copy) TDImageDownloaderProgressBlock progressBlock;
+@property (nonatomic,copy) TDImageDownloaderCompleteBlock completeBlock;
 
-@property (nonatomic,strong) NSURLSessionDownloadTask *downTask;
+@property (nonatomic,strong) NSURLSessionDataTask *downDataTask;
 @property (nonatomic,strong) NSURLSession *downloadSession;
-
+@property (strong, nonatomic) NSMutableData *imageData;
 @end
 
 @implementation TDImageDownloaderOperation
@@ -30,35 +31,79 @@
 
 - (void)start{
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:[NSOperationQueue new]];
+    self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
     
-    self.downTask = [self.downloadSession downloadTaskWithRequest:self.request];
-    [self.downTask resume];
+    self.downDataTask = [self.downloadSession dataTaskWithRequest:self.request];
+    [self.downDataTask resume];
+    
+    [self.downloadSession finishTasksAndInvalidate];
     
 }
 
-#pragma mark - NSURLSessionDownloadDelegate
+#pragma mark - NSURLSessionDataDelegate
 
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
-      didWriteData:(int64_t)bytesWritten
- totalBytesWritten:(int64_t)totalBytesWritten
-totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite{
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+didReceiveResponse:(NSURLResponse *)response
+ completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler{
     
-    if (self.progrssBlock) {
-        self.progrssBlock(totalBytesWritten,totalBytesExpectedToWrite);
+    NSInteger expected = response.expectedContentLength > 0 ? (NSInteger)response.expectedContentLength : 0;
+    self.expectedSize = expected;
+    if (self.progressBlock) {
+        self.progressBlock(0, expected);
     }
     
+    self.imageData = [[NSMutableData alloc] initWithCapacity:expected];
+    completionHandler(NSURLSessionResponseAllow);
+    
+    
 }
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
-didFinishDownloadingToURL:(NSURL *)location{
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+    didReceiveData:(NSData *)data{
+    [self.imageData appendData:data];
+    
+    if (self.progressBlock) {
+        self.progressBlock(self.imageData.length,self.expectedSize);
+    }
+    
+    
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error{
+    
+    if (self.completeBlock) {
+        if (self.imageData) {
+            UIImage *image = [UIImage imageWithData:self.imageData];
+            
+            self.completeBlock(image,self.imageData,error,YES);
+        }
+        
+    }
     
     
     
 }
 
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
- didResumeAtOffset:(int64_t)fileOffset
-expectedTotalBytes:(int64_t)expectedTotalBytes{
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @end
+
+
+
+
