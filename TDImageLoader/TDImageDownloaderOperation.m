@@ -21,19 +21,26 @@
 @implementation TDImageDownloaderOperation
 
 
-- (instancetype)initWithRequest:(NSURLRequest *)request{
+- (instancetype)initWithRequest:(NSURLRequest *)request options:(TDImageDownLoderOptions)options progress:(TDImageDownloaderProgressBlock)progressBlock completed:(TDImageDownloaderCompleteBlock)completeBlock{
     if (self = [super init]) {
         _request = request;
-        
+        _options = options;
+        _progressBlock = [completeBlock copy];
+        _completeBlock = [progressBlock copy];
     }
     return self;
 }
 
 - (void)start{
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
+    @synchronized (self) {
+        
+        NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        self.downloadSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:nil];
+        
+        self.downDataTask = [self.downloadSession dataTaskWithRequest:self.request];
+    }
     
-    self.downDataTask = [self.downloadSession dataTaskWithRequest:self.request];
+    
     [self.downDataTask resume];
     
     [self.downloadSession finishTasksAndInvalidate];
@@ -45,6 +52,7 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler{
+    
     
     NSInteger expected = response.expectedContentLength > 0 ? (NSInteger)response.expectedContentLength : 0;
     self.expectedSize = expected;
@@ -70,17 +78,19 @@ didReceiveResponse:(NSURLResponse *)response
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error{
+    TDImageDownloaderCompleteBlock completeBlock = self.completeBlock;
     
-    if (self.completeBlock) {
+    
+    if (completeBlock) {
         if (self.imageData) {
             UIImage *image = [UIImage imageWithData:self.imageData];
             
-            self.completeBlock(image,self.imageData,error,YES);
+            self.completeBlock(image,self.imageData,nil,YES);
         }
         
     }
     
-    
+    self.completeBlock = nil;
     
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28ABBCC41CF82546003F3721 /* TDImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28ABBCC31CF82546003F3721 /* TDImageManager.m */; };
 		28F4BB6C1CEFF4D3003AEA95 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BB6B1CEFF4D3003AEA95 /* main.m */; };
 		28F4BB6F1CEFF4D3003AEA95 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BB6E1CEFF4D3003AEA95 /* AppDelegate.m */; };
 		28F4BB721CEFF4D3003AEA95 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4BB711CEFF4D3003AEA95 /* ViewController.m */; };
@@ -39,6 +40,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		28ABBCC21CF82546003F3721 /* TDImageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDImageManager.h; sourceTree = "<group>"; };
+		28ABBCC31CF82546003F3721 /* TDImageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDImageManager.m; sourceTree = "<group>"; };
+		28ABBCC51CF901EC003F3721 /* TDImagOperationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDImagOperationProtocol.h; sourceTree = "<group>"; };
 		28F4BB671CEFF4D3003AEA95 /* TDImageLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TDImageLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28F4BB6B1CEFF4D3003AEA95 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		28F4BB6D1CEFF4D3003AEA95 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -116,6 +120,9 @@
 				28F4BB6E1CEFF4D3003AEA95 /* AppDelegate.m */,
 				28F4BB701CEFF4D3003AEA95 /* ViewController.h */,
 				28F4BB711CEFF4D3003AEA95 /* ViewController.m */,
+				28ABBCC21CF82546003F3721 /* TDImageManager.h */,
+				28ABBCC31CF82546003F3721 /* TDImageManager.m */,
+				28ABBCC51CF901EC003F3721 /* TDImagOperationProtocol.h */,
 				28F4BBA01CEFF8CA003AEA95 /* TDImageDownloaderOperation.h */,
 				28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */,
 				28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */,
@@ -289,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28F4BB781CEFF4D3003AEA95 /* TDImageLoader.xcdatamodeld in Sources */,
+				28ABBCC41CF82546003F3721 /* TDImageManager.m in Sources */,
 				28F4BB721CEFF4D3003AEA95 /* ViewController.m in Sources */,
 				28F4BB6F1CEFF4D3003AEA95 /* AppDelegate.m in Sources */,
 				28F4BB6C1CEFF4D3003AEA95 /* main.m in Sources */,
