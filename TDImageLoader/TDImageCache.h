@@ -25,9 +25,12 @@ typedef void(^TDImageQueryCompletBlock)(UIImage *image ,TDImageCacheType cacheTy
 
 @property (assign, nonatomic) BOOL shouldCacheImagesInMemory;
 
+
 +(TDImageCache *)shareImageCache;
 
 - (void)storeImage:(NSURL *)location forKey:(NSString *)key toDisk:(BOOL)toDisk;
+
+- (void)storeImge:(UIImage *)image imageData:(NSData*)imageData forKey:(NSString *)key toDisk:(BOOL)toDisk;
 
 - (NSOperation *)queryDiskCacheForKey:(NSString *)key done:(TDImageQueryCompletBlock)doneBlock;
 

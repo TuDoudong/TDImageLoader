@@ -15,9 +15,40 @@
 
 @property (strong, nonatomic) NSOperation *cacheOperation;
 
+@property (copy,nonatomic) TDImageCallBackBlock cancelBlock;
+
 @end
 
+@implementation TDImageCombinedOperation
 
+- (void)setCancelBlock:(TDImageCallBackBlock)cancelBlock{
+    if (self.isCancelled) {
+        if (self.cancelBlock) {
+            self.cancelBlock();
+        }
+        _cancelBlock = nil;
+    }else{
+        _cancelBlock = [cancelBlock copy];
+    }
+}
+
+- (void)cancel{
+    self.cancelled = YES;
+    
+    if (self.cacheOperation) {
+        [self.cacheOperation cancel];
+        self.cacheOperation = nil;
+    }
+    
+    
+    if (self.cancelBlock) {
+        self.cancelBlock();
+        _cancelBlock = nil;
+    }
+}
+
+
+@end
 
 @interface TDImageManager ()
 @property (strong, nonatomic) NSMutableSet *failedURLs;
@@ -103,15 +134,40 @@
                 }else if (weakOperation.isCancelled){
                 
                 }else{
+                    if (options & TDImageRetryFailed) {
+                        @synchronized (self.failedURLs) {
+                            [self.failedURLs removeObject:url];
+                        }
+                    }
+                    
+                    BOOL cacheOnDisk = !(options & TDImageCacheMemoryOnly);
+                    
+                    if (image && isfinished) {
+                        [self.imageCache storeImge:image imageData:data forKey:url.absoluteString toDisk:cacheOnDisk];
+                    }
+                    
+                    dispatch_main_sync_safe(^{
+                        if (!weakOperation.cancelled) {
+                            comlpleteBlock(image,nil,TDImageCacheTypeNone,YES,url);
+                        }
+                    });
                     
                 }
                 
+                @synchronized (self.runningOperations) {
+                    [self.runningOperations removeObject:Operation];
+                }
                 
             }];
+            Operation.cancelBlock = ^{
+                [subOperation cancel];
+                @synchronized (self.runningOperations) {
+                    [self.runningOperations removeObject:weakOperation];
+                }
+                
+            };
             
             
-            
-
             
         }else if(image){
             dispatch_main_sync_safe(^{
