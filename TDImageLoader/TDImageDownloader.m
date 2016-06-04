@@ -49,7 +49,7 @@
         _downloadQueue.maxConcurrentOperationCount = 6;
         _executOrder = TDImageDownloaderFIFOExecutionOrder;
         _operationClass = [TDImageDownloaderOperation class];
-        
+        _callBackDics = [NSMutableDictionary dictionary];
         _barrierQueue = dispatch_queue_create("com.tudoudong.TDImageLoaderBarrierQueue", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
@@ -98,6 +98,8 @@
     progressBlock = [self.progrssBlock copy];
     
 }
+
+
 
 
 
@@ -190,7 +192,7 @@
         BOOL first = NO;
         
         if (!self.callBackDics[url]) {
-            self.callBackDics[url] = [NSMutableArray array];
+            self.callBackDics[url] = [NSMutableArray new];
             first = YES;
         }
         

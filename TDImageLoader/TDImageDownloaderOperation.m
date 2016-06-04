@@ -25,13 +25,16 @@
     if (self = [super init]) {
         _request = request;
         _options = options;
-        _progressBlock = [completeBlock copy];
-        _completeBlock = [progressBlock copy];
+        _progressBlock = [progressBlock copy];
+        _completeBlock = [completeBlock copy];
     }
     return self;
 }
 
 - (void)start{
+    
+    
+    
     @synchronized (self) {
         
         NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];

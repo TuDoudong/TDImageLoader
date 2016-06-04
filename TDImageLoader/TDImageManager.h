@@ -44,6 +44,7 @@ typedef void(^TDImageDownloaderCompleteFinishedBlock)(UIImage *image, NSError *e
 
 +(instancetype)shareManager;
 
+
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
                      options:(TDImageOptions)options
                     progress:(TDImageDownloaderProgressBlock)progressBlock

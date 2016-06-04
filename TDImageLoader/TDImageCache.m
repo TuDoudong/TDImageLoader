@@ -11,6 +11,26 @@
 #import <CommonCrypto/CommonDigest.h>
 
 
+@interface TDAutoCleanCache : NSCache
+
+@end
+
+@implementation TDAutoCleanCache
+
+-(instancetype)init{
+    if (self = [super init]) {
+        
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(removeAllObjects) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+        
+    }
+    return self;
+}
+
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+}
+
+@end
 
 @interface TDImageCache ()
 
@@ -52,6 +72,7 @@
             _diskCachePath = [self makeDiskPathWithNameSpace:ns];
         }
         
+        _memCache = [[TDAutoCleanCache alloc]init];
         _ioQueue = dispatch_queue_create("com.tudoudong.TDImageCache", DISPATCH_QUEUE_SERIAL);
         
         
@@ -134,6 +155,37 @@
     
 }
 
+
+- (void)storeImge:(UIImage *)image imageData:(NSData*)imageData forKey:(NSString *)key toDisk:(BOOL)toDisk{
+    
+    if (self.shouldCacheImagesInMemory) {
+        [self.memCache setObject:image forKey:key];
+    }
+    
+    
+    
+    if (toDisk) {
+        
+        dispatch_async(self.ioQueue, ^{
+            
+            NSData *data = imageData;
+            
+            NSFileManager *filemanager = [NSFileManager defaultManager];
+            
+            if (![filemanager fileExistsAtPath:_diskCachePath]) {
+                [filemanager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+            }
+            
+            NSString *cachePathForKey = [self defaultCachePathForKey:key];
+            [filemanager createFileAtPath:cachePathForKey contents:data attributes:nil];
+            
+            
+        });
+        
+    }
+    
+
+}
 
 - (NSOperation *)queryDiskCacheForKey:(NSString *)key done:(TDImageQueryCompletBlock)doneBlock{
     if (!doneBlock) {
