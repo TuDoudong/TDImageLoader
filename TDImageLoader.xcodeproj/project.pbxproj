@@ -93,6 +93,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		28E3106B1D02D90A00DE903C /* TDImageLoader */ = {
+			isa = PBXGroup;
+			children = (
+				28ABBCC21CF82546003F3721 /* TDImageManager.h */,
+				28ABBCC31CF82546003F3721 /* TDImageManager.m */,
+				28ABBCC51CF901EC003F3721 /* TDImagOperationProtocol.h */,
+				28F4BBA01CEFF8CA003AEA95 /* TDImageDownloaderOperation.h */,
+				28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */,
+				28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */,
+				28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */,
+				28F4BBA41CEFF8CA003AEA95 /* TDImageCache.h */,
+				28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */,
+			);
+			name = TDImageLoader;
+			sourceTree = "<group>";
+		};
 		28F4BB5E1CEFF4D3003AEA95 = {
 			isa = PBXGroup;
 			children = (
@@ -120,15 +136,7 @@
 				28F4BB6E1CEFF4D3003AEA95 /* AppDelegate.m */,
 				28F4BB701CEFF4D3003AEA95 /* ViewController.h */,
 				28F4BB711CEFF4D3003AEA95 /* ViewController.m */,
-				28ABBCC21CF82546003F3721 /* TDImageManager.h */,
-				28ABBCC31CF82546003F3721 /* TDImageManager.m */,
-				28ABBCC51CF901EC003F3721 /* TDImagOperationProtocol.h */,
-				28F4BBA01CEFF8CA003AEA95 /* TDImageDownloaderOperation.h */,
-				28F4BBA11CEFF8CA003AEA95 /* TDImageDownloaderOperation.m */,
-				28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */,
-				28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */,
-				28F4BBA41CEFF8CA003AEA95 /* TDImageCache.h */,
-				28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */,
+				28E3106B1D02D90A00DE903C /* TDImageLoader */,
 				28F4BB731CEFF4D3003AEA95 /* Main.storyboard */,
 				28F4BB791CEFF4D3003AEA95 /* Assets.xcassets */,
 				28F4BB7B1CEFF4D3003AEA95 /* LaunchScreen.storyboard */,

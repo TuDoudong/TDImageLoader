@@ -38,6 +38,7 @@
 
 @property (nonatomic,strong) NSCache *memCache;
 @property (nonatomic,strong) dispatch_queue_t ioQueue;
+@property (nonatomic,strong) NSFileManager *fileManager;
 
 @end
 
@@ -74,7 +75,9 @@
         
         _memCache = [[TDAutoCleanCache alloc]init];
         _ioQueue = dispatch_queue_create("com.tudoudong.TDImageCache", DISPATCH_QUEUE_SERIAL);
-        
+        dispatch_sync(_ioQueue, ^{
+            _fileManager = [NSFileManager defaultManager];
+        });
         
     }
     return self;
@@ -113,47 +116,6 @@
 }
 
 #pragma mark - TDImageCache
-
-- (void)storeImage:(NSURL *)location forKey:(NSString *)key toDisk:(BOOL)toDisk{
-    if (!location || !key) {
-        return;
-    }
-    
-    
-    NSData *data = [NSData dataWithContentsOfURL:location];
-    UIImage *image = [UIImage imageWithData:data];
-    
-    if (self.shouldCacheImagesInMemory) {
-        [self.memCache setObject:image forKey:key];
-    }
-    
-    
-    
-    if (toDisk) {
-        
-        dispatch_async(self.ioQueue, ^{
-            
-            
-            
-            
-            
-            
-            NSFileManager *filemanager = [NSFileManager defaultManager];
-            
-            if (![filemanager fileExistsAtPath:_diskCachePath]) {
-                [filemanager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
-            }
-            
-            NSString *cachePathForKey = [self defaultCachePathForKey:key];
-            
-            [filemanager createFileAtPath:cachePathForKey contents:data attributes:nil];
-            
-
-        });
-        
-    }
-    
-}
 
 
 - (void)storeImge:(UIImage *)image imageData:(NSData*)imageData forKey:(NSString *)key toDisk:(BOOL)toDisk{
@@ -211,6 +173,7 @@
         }
         
         @autoreleasepool {
+            
             UIImage *diskImage = [self diskImageForKey:key];
             if (diskImage && self.shouldCacheImagesInMemory) {
                 [self.memCache setObject:diskImage forKey:key];
@@ -248,11 +211,55 @@
 }
 
 
+- (void)removeImageForKey:(NSString *)key{
+    if (!key) {
+        return;
+    }
+    NSString *cachePath = [self defaultCachePathForKey:key];
+    if (self.shouldCacheImagesInMemory) {
+        [self.memCache removeObjectForKey:key];
+    }
+    
+    dispatch_async(self.ioQueue, ^{
+        [self.fileManager removeItemAtPath:cachePath error:nil];
+    });
+    
+    
+}
+
+- (void)clearAllMemory{
+    
+    [self.memCache removeAllObjects];
+}
+
+- (void)clearAllDisk{
+    
+    dispatch_async(self.ioQueue, ^{
+        [self.fileManager removeItemAtPath:self.diskCachePath error:nil];
+        [self.fileManager createDirectoryAtPath:self.diskCachePath
+                withIntermediateDirectories:YES
+                                 attributes:nil
+                                      error:NULL];
+    });
+    
+}
 
 
-
-
-
+- (NSUInteger)getDiskSize{
+    __block NSUInteger fileSize = 0;
+    
+    dispatch_sync(self.ioQueue, ^{
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.diskCachePath];
+        for (NSString *fileName in fileEnumerator) {
+            NSString *filePath = [self.diskCachePath stringByAppendingPathComponent:fileName];
+            NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+            fileSize += [attrs fileSize];
+        }
+    });
+    
+    return fileSize;
+    
+}
 
 
 

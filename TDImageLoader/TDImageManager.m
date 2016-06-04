@@ -51,6 +51,7 @@
 @end
 
 @interface TDImageManager ()
+
 @property (strong, nonatomic) NSMutableSet *failedURLs;
 @property (strong, nonatomic) NSMutableArray *runningOperations;
 
@@ -134,6 +135,7 @@
                 }else if (weakOperation.isCancelled){
                 
                 }else{
+                    
                     if (options & TDImageRetryFailed) {
                         @synchronized (self.failedURLs) {
                             [self.failedURLs removeObject:url];

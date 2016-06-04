@@ -38,14 +38,10 @@ typedef NSURL * (^TDURLSessionDownloadTaskDidFinishDownloadingBlock)(NSURLSessio
 
 @property (nonatomic,strong,readonly)TDImageCache *imageCache;
 
-+(TDImageDownloader *)shareDownloader;
 
 @property (assign, nonatomic) NSTimeInterval downloadTimeout;
 
-
--(void)downloadImageFrom:(NSURL *)url
-                progress:(TDImageDownloaderProgressBlock)progressBlock
-                complete:(TDImageDownloaderCompleteBlock)completedBlock;
++(TDImageDownloader *)shareDownloader;
 
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
                      options:(TDImageDownLoderOptions)options
