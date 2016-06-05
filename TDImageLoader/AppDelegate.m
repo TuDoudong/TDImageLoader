@@ -2,7 +2,7 @@
 //  AppDelegate.m
 //  TDImageLoader
 //
-//  Created by 董慧翔 on 16/5/21.
+//  Created by TudouDong on 16/5/21.
 //  Copyright © 2016年 TudouDong. All rights reserved.
 //
 

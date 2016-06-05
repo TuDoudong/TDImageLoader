@@ -2,7 +2,7 @@
 //  TDImageManager.m
 //  TDImageLoader
 //
-//  Created by 董慧翔 on 16/5/27.
+//  Created by TudouDong on 16/5/27.
 //  Copyright © 2016年 TudouDong. All rights reserved.
 //
 
@@ -79,7 +79,7 @@
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
                      options:(TDImageOptions)options
                     progress:(TDImageDownloaderProgressBlock)progressBlock
-                    complete:(TDImageDownloaderCompleteFinishedBlock)comlpleteBlock{
+                    complete:(TDImageCompleteFinishedBlock)comlpleteBlock{
     
     if ([url isKindOfClass:[NSString class]]) {
         url = [NSURL URLWithString:(NSString *)url];

@@ -2,7 +2,7 @@
 //  TDImageManager.h
 //  TDImageLoader
 //
-//  Created by 董慧翔 on 16/5/27.
+//  Created by TudouDong on 16/5/27.
 //  Copyright © 2016年 TudouDong. All rights reserved.
 //
 
@@ -25,7 +25,7 @@ if ([NSThread isMainThread]) {\
 } else {\
     dispatch_async(dispatch_get_main_queue(), block);\
 }
-
+NSString *const TDImageErrorDomain = @"TDImageErrorDomain";
 
 
 typedef NS_OPTIONS(NSUInteger, TDImageOptions) {
@@ -34,7 +34,9 @@ typedef NS_OPTIONS(NSUInteger, TDImageOptions) {
     TDImageRefreshCache = 1 << 2,
 };
 
-typedef void(^TDImageDownloaderCompleteFinishedBlock)(UIImage *image, NSError *error, TDImageCacheType cacheType, BOOL isfinished, NSURL *imageURL);
+typedef void(^TDImageCompleteFinishedBlock)(UIImage *image, NSError *error, TDImageCacheType cacheType, BOOL isfinished, NSURL *imageURL);
+
+typedef void(^TDImageCompleteBlock)(UIImage *image, NSError *error, TDImageCacheType cacheType, NSURL *imageURL);
 
 @interface TDImageManager : NSObject
 
@@ -48,7 +50,7 @@ typedef void(^TDImageDownloaderCompleteFinishedBlock)(UIImage *image, NSError *e
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
                      options:(TDImageOptions)options
                     progress:(TDImageDownloaderProgressBlock)progressBlock
-                    complete:(TDImageDownloaderCompleteFinishedBlock)comlpleteBlock;
+                    complete:(TDImageCompleteFinishedBlock)comlpleteBlock;
 
 
 

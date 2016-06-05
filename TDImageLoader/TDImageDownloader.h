@@ -2,7 +2,7 @@
 //  TDImageDownloader.h
 //  TDImageCache
 //
-//  Created by 董慧翔 on 16/5/13.
+//  Created by TudouDong on 16/5/13.
 //  Copyright © 2016年 TudouDong. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  TDImageCache.m
 //  TDImageCache
 //
-//  Created by 董慧翔 on 16/5/16.
+//  Created by TudouDong on 16/5/16.
 //  Copyright © 2016年 TudouDong. All rights reserved.
 //
 
