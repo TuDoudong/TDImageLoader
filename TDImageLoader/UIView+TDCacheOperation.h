@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <objc/runtime.h>
-#import "TDImageManager.h"
+
+
 
 @interface UIView (TDCacheOperation)
 

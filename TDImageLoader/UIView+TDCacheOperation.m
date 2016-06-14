@@ -7,8 +7,8 @@
 //
 
 #import "UIView+TDCacheOperation.h"
-
-
+#import "TDImageManager.h"
+#import <objc/runtime.h>
 
 @implementation UIView (TDCacheOperation)
 

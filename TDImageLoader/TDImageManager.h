@@ -25,8 +25,7 @@ if ([NSThread isMainThread]) {\
 } else {\
     dispatch_async(dispatch_get_main_queue(), block);\
 }
-NSString *const TDImageErrorDomain = @"TDImageErrorDomain";
-
+extern NSString *const TDImageErrorDomain;
 
 typedef NS_OPTIONS(NSUInteger, TDImageOptions) {
     TDImageRetryFailed = 1 << 0,

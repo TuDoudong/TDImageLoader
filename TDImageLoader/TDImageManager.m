@@ -201,5 +201,6 @@
     
 }
 
+NSString *const TDImageErrorDomain = @"TDImageErrorDomain";
 
 @end

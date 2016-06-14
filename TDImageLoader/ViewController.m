@@ -8,8 +8,7 @@
 
 #import "ViewController.h"
 
-#import "TDImageDownloaderOperation.h"
-#import "TDImageDownloader.h"
+
 #import "TDImageManager.h"
 @interface ViewController ()
 

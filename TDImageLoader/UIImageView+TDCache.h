@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "TDImageManager.h"
+
 @interface UIImageView (TDCache)
+
 - (void)d_setImageWithURl:(NSURL *)url;
 - (void)d_setImageWithURl:(NSURL *)url placeholderImage:(UIImage *)placeholder;
 - (void)d_setImageWithURl:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(TDImageOptions)options;
