@@ -110,11 +110,11 @@
 				28F4BBA21CEFF8CA003AEA95 /* TDImageDownloader.h */,
 				28F4BBA31CEFF8CA003AEA95 /* TDImageDownloader.m */,
 				28F4BBA41CEFF8CA003AEA95 /* TDImageCache.h */,
+				28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */,
 				282EAB4A1D08657100438F35 /* UIImageView+TDCache.h */,
 				282EAB4B1D08657100438F35 /* UIImageView+TDCache.m */,
 				282EAB4C1D08657100438F35 /* UIView+TDCacheOperation.h */,
 				282EAB4D1D08657100438F35 /* UIView+TDCacheOperation.m */,
-				28F4BBA51CEFF8CA003AEA95 /* TDImageCache.m */,
 			);
 			name = TDImageLoader;
 			sourceTree = "<group>";

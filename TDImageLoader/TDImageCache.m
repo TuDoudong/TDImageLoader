@@ -79,6 +79,22 @@
             _fileManager = [NSFileManager defaultManager];
         });
         
+        _maxCachePeriod =  60 * 60 * 24 * 7;
+        
+        
+        
+        
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(clearAllMemory)
+                                                     name:UIApplicationDidReceiveMemoryWarningNotification
+                                                   object:nil];
+        
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(cleanExpiredDisk)
+//                                                     name:UIApplicationWillTerminateNotification
+//                                                   object:nil];
+        
     }
     return self;
 }
@@ -241,6 +257,77 @@
                                  attributes:nil
                                       error:NULL];
     });
+    
+}
+
+- (void)cleanExpiredDisk{
+    [self cleanExpiredDiskWithCompleteBlock:nil];
+}
+
+
+- (void)cleanExpiredDiskWithCompleteBlock:(void(^)())complteBlock{
+    
+    dispatch_async(self.ioQueue, ^{
+        NSURL *diskCacheUrl = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];
+        NSArray *resourceKeys = @[NSURLIsDirectoryKey,NSURLContentModificationDateKey,NSURLTotalFileAllocatedSizeKey];
+        
+        NSDirectoryEnumerator *fileEnumerator =  [self.fileManager enumeratorAtURL:diskCacheUrl includingPropertiesForKeys:resourceKeys options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:NULL];
+        NSDate *expiredDate = [NSDate dateWithTimeIntervalSinceNow:-self.maxCachePeriod];
+        NSMutableDictionary *cacheFileDics = [NSMutableDictionary dictionary];
+        NSMutableArray *deleteURLs = [NSMutableArray array];
+        NSUInteger currentCacheSize = 0;
+        for (NSURL *fileURL in fileEnumerator) {
+            NSDictionary *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:NULL];
+            if ([resourceValues[NSURLIsDirectoryKey] boolValue]) {
+                continue;
+            }
+            
+            NSDate *modifyDate = resourceValues[NSURLContentModificationDateKey];
+            if ([[modifyDate laterDate:expiredDate] isEqualToDate:expiredDate]) {
+                [deleteURLs addObject:fileURL];
+                continue;
+            }
+            
+            NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+            currentCacheSize += totalAllocatedSize.unsignedIntegerValue;
+            [cacheFileDics setObject:resourceValues forKey:fileURL];
+            
+        }
+        
+        for (NSURL *fileURL in deleteURLs) {
+            [self.fileManager removeItemAtURL:fileURL error:nil];
+        }
+        
+        if (self.maxCacheSize > 0 && currentCacheSize > self.maxCacheSize) {
+            const NSUInteger desiredCacheSize = self.maxCacheSize / 2;
+            NSArray *soredFiles = [cacheFileDics keysSortedByValueWithOptions:NSSortConcurrent usingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1[NSURLContentModificationDateKey] compare:obj2[NSURLContentModificationDateKey]];
+            }];
+            
+            for (NSURL *fileURL in soredFiles) {
+                if ([self.fileManager removeItemAtURL:fileURL error:nil]) {
+                    NSDictionary *resourceValues = cacheFileDics[fileURL];
+                    NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+                    currentCacheSize -= totalAllocatedSize.unsignedIntegerValue;
+                    
+                    if (currentCacheSize < desiredCacheSize) {
+                        break;
+                    }
+                    
+                }
+            }
+            
+            if (complteBlock) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    complteBlock();
+                });
+            }
+            
+        }
+        
+        
+    });
+    
     
 }
 
