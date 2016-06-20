@@ -33,6 +33,9 @@ typedef void(^TDImageDownloaderCompleteBlock)(UIImage *image, NSData *data, NSEr
 
 typedef NSURL * (^TDURLSessionDownloadTaskDidFinishDownloadingBlock)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location);
 
+
+
+
 @interface TDImageDownloader : NSObject
 
 
