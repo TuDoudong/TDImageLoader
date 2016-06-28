@@ -110,7 +110,18 @@
                 
             }
             
-        } ];
+        } cancel:^{
+            
+            TDImageDownloader *sself = weakself;
+            if (!sself) {
+                return ;
+            }
+            
+            dispatch_barrier_async(sself.barrierQueue, ^{
+                [sself.callBackDics removeObjectForKey:url];
+            });
+            
+        }];
         
         
         [weakself.downloadQueue addOperation:operation];
@@ -120,7 +131,6 @@
             [weakself.lastAddedOperation addDependency:operation];
             weakself.lastAddedOperation = operation;
         }
-
         
     }];
     

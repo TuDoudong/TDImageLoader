@@ -22,5 +22,6 @@
 - (instancetype)initWithRequest:(NSURLRequest *)request
                         options:(TDImageDownLoderOptions)options
                        progress:(TDImageDownloaderProgressBlock)progressBlock
-                      completed:(TDImageDownloaderCompleteBlock)completeBlock;
+                      completed:(TDImageDownloaderCompleteBlock)completeBlock
+                         cancel:(TDImageCallBackBlock)cancelBlock;
 @end
