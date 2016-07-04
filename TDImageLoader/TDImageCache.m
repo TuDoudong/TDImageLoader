@@ -9,7 +9,7 @@
 #import "TDImageCache.h"
 
 #import <CommonCrypto/CommonDigest.h>
-
+#import "UIImage+TDMultiFormat.h"
 
 @interface TDAutoCleanCache : NSCache
 
@@ -218,7 +218,7 @@
     NSData *data = [NSData dataWithContentsOfFile:cachePath];
     
     if (data) {
-        UIImage *image = [UIImage imageWithData:data];
+        UIImage *image = [UIImage td_imageWithData:data];
         return image;
     }
     

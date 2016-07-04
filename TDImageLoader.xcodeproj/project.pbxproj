@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		280EB4AE1D23FB7600A3179E /* UIImage+TDMultiFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 280EB4AD1D23FB7600A3179E /* UIImage+TDMultiFormat.m */; };
+		280EB4B11D23FC8900A3179E /* NSData+TDImageDataType.m in Sources */ = {isa = PBXBuildFile; fileRef = 280EB4B01D23FC8900A3179E /* NSData+TDImageDataType.m */; };
 		282EAB4E1D08657100438F35 /* UIImageView+TDCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 282EAB4B1D08657100438F35 /* UIImageView+TDCache.m */; };
 		282EAB4F1D08657100438F35 /* UIView+TDCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 282EAB4D1D08657100438F35 /* UIView+TDCacheOperation.m */; };
 		28ABBCC41CF82546003F3721 /* TDImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28ABBCC31CF82546003F3721 /* TDImageManager.m */; };
@@ -42,6 +44,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		280EB4AC1D23FB7600A3179E /* UIImage+TDMultiFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+TDMultiFormat.h"; sourceTree = "<group>"; };
+		280EB4AD1D23FB7600A3179E /* UIImage+TDMultiFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+TDMultiFormat.m"; sourceTree = "<group>"; };
+		280EB4AF1D23FC8900A3179E /* NSData+TDImageDataType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+TDImageDataType.h"; sourceTree = "<group>"; };
+		280EB4B01D23FC8900A3179E /* NSData+TDImageDataType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+TDImageDataType.m"; sourceTree = "<group>"; };
 		282EAB4A1D08657100438F35 /* UIImageView+TDCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+TDCache.h"; sourceTree = "<group>"; };
 		282EAB4B1D08657100438F35 /* UIImageView+TDCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+TDCache.m"; sourceTree = "<group>"; };
 		282EAB4C1D08657100438F35 /* UIView+TDCacheOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+TDCacheOperation.h"; sourceTree = "<group>"; };
@@ -115,6 +121,10 @@
 				282EAB4B1D08657100438F35 /* UIImageView+TDCache.m */,
 				282EAB4C1D08657100438F35 /* UIView+TDCacheOperation.h */,
 				282EAB4D1D08657100438F35 /* UIView+TDCacheOperation.m */,
+				280EB4AC1D23FB7600A3179E /* UIImage+TDMultiFormat.h */,
+				280EB4AD1D23FB7600A3179E /* UIImage+TDMultiFormat.m */,
+				280EB4AF1D23FC8900A3179E /* NSData+TDImageDataType.h */,
+				280EB4B01D23FC8900A3179E /* NSData+TDImageDataType.m */,
 			);
 			name = TDImageLoader;
 			sourceTree = "<group>";
@@ -317,10 +327,12 @@
 				28ABBCC41CF82546003F3721 /* TDImageManager.m in Sources */,
 				28F4BB721CEFF4D3003AEA95 /* ViewController.m in Sources */,
 				28F4BB6F1CEFF4D3003AEA95 /* AppDelegate.m in Sources */,
+				280EB4B11D23FC8900A3179E /* NSData+TDImageDataType.m in Sources */,
 				28F4BB6C1CEFF4D3003AEA95 /* main.m in Sources */,
 				282EAB4E1D08657100438F35 /* UIImageView+TDCache.m in Sources */,
 				28F4BBA71CEFF8CA003AEA95 /* TDImageDownloader.m in Sources */,
 				28F4BBA61CEFF8CA003AEA95 /* TDImageDownloaderOperation.m in Sources */,
+				280EB4AE1D23FB7600A3179E /* UIImage+TDMultiFormat.m in Sources */,
 				28F4BBA81CEFF8CA003AEA95 /* TDImageCache.m in Sources */,
 				282EAB4F1D08657100438F35 /* UIView+TDCacheOperation.m in Sources */,
 			);
