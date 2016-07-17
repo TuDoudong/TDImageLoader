@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "TDImageCache.h"
 #import "TDImageDownloader.h"
-#import "TDImageDownloaderOperation.h"
 #import "TDImagOperationProtocol.h"
 
 #define dispatch_main_sync_safe(block)\
@@ -37,6 +36,10 @@ typedef void(^TDImageCompleteFinishedBlock)(UIImage *image, NSError *error, TDIm
 
 typedef void(^TDImageCompleteBlock)(UIImage *image, NSError *error, TDImageCacheType cacheType, NSURL *imageURL);
 
+
+
+
+
 @interface TDImageManager : NSObject
 
 @property (nonatomic,strong,readonly)TDImageCache *imageCache;
@@ -48,6 +51,7 @@ typedef void(^TDImageCompleteBlock)(UIImage *image, NSError *error, TDImageCache
 
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
                      options:(TDImageOptions)options
+                   cacheType:(TDImageCacheType)cacheType
                     progress:(TDImageDownloaderProgressBlock)progressBlock
                     complete:(TDImageCompleteFinishedBlock)comlpleteBlock;
 

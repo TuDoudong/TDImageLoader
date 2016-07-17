@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "TDImagOperationProtocol.h"
-#import "TDImageCache.h"
+
 
 static NSString *const ProgressCallbackKey = @"progress";
 static NSString *const CompletedCallbackKey = @"completed";
@@ -37,9 +37,6 @@ typedef NSURL * (^TDURLSessionDownloadTaskDidFinishDownloadingBlock)(NSURLSessio
 
 
 @interface TDImageDownloader : NSObject
-
-
-@property (nonatomic,strong,readonly)TDImageCache *imageCache;
 
 
 @property (assign, nonatomic) NSTimeInterval downloadTimeout;

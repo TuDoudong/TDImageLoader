@@ -39,7 +39,7 @@
 
 - (instancetype)init{
     if (self = [super init]) {
-        _imageCache = [TDImageCache shareImageCache];
+        
         _downloadQueue = [[NSOperationQueue alloc]init];
         _downloadQueue.maxConcurrentOperationCount = 6;
         _executOrder = TDImageDownloaderFIFOExecutionOrder;

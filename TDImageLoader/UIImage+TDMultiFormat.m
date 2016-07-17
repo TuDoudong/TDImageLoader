@@ -37,6 +37,8 @@
         
         if (imageWidth >= 3000 || imageHeight >= 3000) {
             image = [self compressImageWith:image];
+        }else{
+            image = [self decodedImageWithImage:image];
         }
         if (!image) {
             return nil;
@@ -59,49 +61,52 @@
 
 + (UIImage *)compressImageWith:(UIImage *)sourceImage{
     
-    CGSize sourceResolution;
-    CGSize destResolution;
-    size_t bytesPerRow = CGImageGetBytesPerRow(sourceImage.CGImage);
-    size_t bytesPerPixel = bytesPerRow / sourceResolution.width;
-    size_t bitsPerComponent = CGImageGetBitsPerComponent(sourceImage.CGImage);
-    CGFloat bytesPerMB = 1048576.0f;
-    CGFloat pixelsPerMB = bytesPerMB/bytesPerPixel;
-    CGFloat kDestImageSizeMB =  30.f;
-    CGFloat destTotalPixels = kDestImageSizeMB * pixelsPerMB;
-    
-    sourceResolution.width = CGImageGetWidth(sourceImage.CGImage);
-    sourceResolution.height = CGImageGetHeight(sourceImage.CGImage);
-    
-    CGFloat sourceTotalPixels = sourceResolution.width * sourceResolution.height;
-    CGFloat imageScale = destTotalPixels/sourceTotalPixels;
-    
-    destResolution.width = (NSInteger)( sourceResolution.width * imageScale );
-    destResolution.height = (NSInteger)( sourceResolution.height * imageScale );
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    NSInteger destBytesPerRow = bytesPerPixel * destResolution.width;
-    void* destBitmapData = malloc( destBytesPerRow * destResolution.height );
-    if( destBitmapData == NULL ) {
-        NSLog(@"failed to allocate space for the output image!");
-        return nil;
+    @autoreleasepool {
+        
+        CGSize sourceResolution;
+        CGSize destResolution;
+        size_t bytesPerRow = CGImageGetBytesPerRow(sourceImage.CGImage);
+        size_t bytesPerPixel = bytesPerRow / sourceResolution.width;
+        size_t bitsPerComponent = CGImageGetBitsPerComponent(sourceImage.CGImage);
+        CGFloat bytesPerMB = 1048576.0f;
+        CGFloat pixelsPerMB = bytesPerMB/bytesPerPixel;
+        CGFloat kDestImageSizeMB =  30.f;
+        CGFloat destTotalPixels = kDestImageSizeMB * pixelsPerMB;
+        
+        sourceResolution.width = CGImageGetWidth(sourceImage.CGImage);
+        sourceResolution.height = CGImageGetHeight(sourceImage.CGImage);
+        
+        CGFloat sourceTotalPixels = sourceResolution.width * sourceResolution.height;
+        CGFloat imageScale = destTotalPixels/sourceTotalPixels;
+        
+        destResolution.width = (NSInteger)( sourceResolution.width * imageScale );
+        destResolution.height = (NSInteger)( sourceResolution.height * imageScale );
+        
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        NSInteger destBytesPerRow = bytesPerPixel * destResolution.width;
+        void* destBitmapData = malloc( destBytesPerRow * destResolution.height );
+        if( destBitmapData == NULL ) {
+            return nil;
+        }
+        
+        CGContextRef destContext = CGBitmapContextCreate( destBitmapData, destResolution.width, destResolution.height, bitsPerComponent, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast );
+        if( destContext == NULL ) {
+            free( destBitmapData );
+            return nil;
+        }
+        CGContextTranslateCTM( destContext, 0.0f, destResolution.height );
+        CGContextScaleCTM( destContext, 1.0f, -1.0f );
+        
+        CGImageRef sourceImageRef = CGImageCreateWithImageInRect( sourceImage.CGImage, CGRectMake(0, 0, sourceImage.size.width, sourceImage.size.height));
+        CGContextDrawImage( destContext, CGRectMake(0, 0, destResolution.width, destResolution.height), sourceImageRef );
+        
+        CGImageRef destImageRef = CGBitmapContextCreateImage( destContext );
+        UIImage *destImage = [UIImage imageWithCGImage:destImageRef scale:1.0f orientation:UIImageOrientationUpMirrored];
+        
+        return destImage;
+
     }
     
-    CGContextRef destContext = CGBitmapContextCreate( destBitmapData, destResolution.width, destResolution.height, bitsPerComponent, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast );
-    if( destContext == NULL ) {
-        free( destBitmapData );
-        NSLog(@"failed to create the output bitmap context!");
-        return nil;
-    }
-    CGContextTranslateCTM( destContext, 0.0f, destResolution.height );
-    CGContextScaleCTM( destContext, 1.0f, -1.0f );
-    
-    CGImageRef sourceImageRef = CGImageCreateWithImageInRect( sourceImage.CGImage, CGRectMake(0, 0, sourceImage.size.width, sourceImage.size.height));
-    CGContextDrawImage( destContext, CGRectMake(0, 0, destResolution.width, destResolution.height), sourceImageRef );
-    
-    CGImageRef destImageRef = CGBitmapContextCreateImage( destContext );
-    UIImage *destImage = [UIImage imageWithCGImage:destImageRef scale:1.0f orientation:UIImageOrientationUpMirrored];
-    
-    return destImage;
     
 }
 
@@ -166,6 +171,56 @@
             break;
     }
     return orientation;
+}
+
+
++ (UIImage *)decodedImageWithImage:(UIImage *)image {
+    
+    @autoreleasepool{
+        // do not decode animated images
+        if (image.images) { return image; }
+        
+        CGImageRef imageRef = image.CGImage;
+        
+        CGImageAlphaInfo alpha = CGImageGetAlphaInfo(imageRef);
+        BOOL anyAlpha = (alpha == kCGImageAlphaFirst ||
+                         alpha == kCGImageAlphaLast ||
+                         alpha == kCGImageAlphaPremultipliedFirst ||
+                         alpha == kCGImageAlphaPremultipliedLast);
+        
+        if (anyAlpha) { return image; }
+        
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        
+        // current
+        CGColorSpaceModel imageColorSpaceModel = CGColorSpaceGetModel(CGImageGetColorSpace(imageRef));
+        CGColorSpaceRef colorspaceRef = CGImageGetColorSpace(imageRef);
+        
+        bool unsupportedColorSpace = (imageColorSpaceModel == 0 || imageColorSpaceModel == -1 || imageColorSpaceModel == kCGColorSpaceModelIndexed);
+        if (unsupportedColorSpace)
+            colorspaceRef = CGColorSpaceCreateDeviceRGB();
+        
+        CGContextRef context = CGBitmapContextCreate(NULL, width,
+                                                     height,
+                                                     CGImageGetBitsPerComponent(imageRef),
+                                                     0,
+                                                     colorspaceRef,
+                                                     kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedFirst);
+        
+        // Draw the image into the context and retrieve the new image, which will now have an alpha layer
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+        CGImageRef imageRefWithAlpha = CGBitmapContextCreateImage(context);
+        UIImage *imageWithAlpha = [UIImage imageWithCGImage:imageRefWithAlpha];
+        
+        if (unsupportedColorSpace)
+            CGColorSpaceRelease(colorspaceRef);
+        
+        CGContextRelease(context);
+        CGImageRelease(imageRefWithAlpha);
+        
+        return imageWithAlpha;
+    }
 }
 
 

@@ -45,7 +45,7 @@
     if (url) {
         __weak typeof(self) weakSelf = self;
        
-       id<TDImagOperationProtocol> operation = [[TDImageManager shareManager]downloadImageWithURL:url options:options progress:progressBlock complete:^(UIImage *image, NSError *error, TDImageCacheType cacheType, BOOL isfinished, NSURL *imageURL) {
+        id<TDImagOperationProtocol> operation = [[TDImageManager shareManager]downloadImageWithURL:url options:options cacheType:TDImageCacheTypeCacheDisk progress:progressBlock complete:^(UIImage *image, NSError *error, TDImageCacheType cacheType, BOOL isfinished, NSURL *imageURL) {
            if (!weakSelf) {
                return ;
            }

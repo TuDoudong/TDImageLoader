@@ -77,9 +77,10 @@
     return self;
 }
 - (id<TDImagOperationProtocol>)downloadImageWithURL:(NSURL *)url
-                     options:(TDImageOptions)options
-                    progress:(TDImageDownloaderProgressBlock)progressBlock
-                    complete:(TDImageCompleteFinishedBlock)comlpleteBlock{
+                                            options:(TDImageOptions)options
+                                          cacheType:(TDImageCacheType)cacheType
+                                           progress:(TDImageDownloaderProgressBlock)progressBlock
+                                           complete:(TDImageCompleteFinishedBlock)comlpleteBlock{
     
     if ([url isKindOfClass:[NSString class]]) {
         url = [NSURL URLWithString:(NSString *)url];
@@ -104,7 +105,7 @@
         [self.runningOperations addObject:Operation];
     }
     
-    Operation.cacheOperation = [self.imageCache queryDiskCacheForKey:url.absoluteString done:^(UIImage *image, TDImageCacheType cacheType) {
+    Operation.cacheOperation = [self.imageCache queryDiskCacheForKey:url.absoluteString cacheType:cacheType done:^(UIImage *image, TDImageCacheType cacheType) {
         if (Operation.isCancelled) {
             @synchronized (self.runningOperations) {
                 [self.runningOperations removeObject:Operation];

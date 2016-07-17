@@ -15,4 +15,7 @@
 + (UIImage *)td_imageWithData:(NSData *)data;
 
 + (UIImage *)compressImageWith:(UIImage *)sourceImage;
+
+
++ (UIImage *)decodedImageWithImage:(UIImage *)image;
 @end

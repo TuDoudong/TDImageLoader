@@ -7,7 +7,7 @@
 //
 
 #import "TDImageDownloaderOperation.h"
-
+#import "UIImage+TDMultiFormat.h"
 @interface TDImageDownloaderOperation ()<NSURLSessionDataDelegate>
 
 @property (nonatomic,copy) TDImageDownloaderProgressBlock progressBlock;
@@ -202,8 +202,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     if (completeBlock) {
         if (self.imageData) {
-            UIImage *image = [UIImage imageWithData:self.imageData];
-            
+            UIImage *image = [UIImage td_imageWithData:self.imageData];
             self.completeBlock(image,self.imageData,nil,YES);
         }
         

@@ -35,7 +35,7 @@
 @interface TDImageCache ()
 
 @property (nonatomic,strong) NSString *diskCachePath;
-
+@property (nonatomic,strong) NSString *diskDocumentPath;
 @property (nonatomic,strong) NSCache *memCache;
 @property (nonatomic,strong) dispatch_queue_t ioQueue;
 @property (nonatomic,strong) NSFileManager *fileManager;
@@ -59,8 +59,8 @@
     return [self initWithNameSpace:@"TDImageDefault"];
 }
 - (instancetype)initWithNameSpace:(NSString *)nameSpace{
-    NSString *path = [self makeDiskPathWithNameSpace:nameSpace];
-    return [self initWithNamespace:nameSpace diskCacheDirectory:path];
+    NSString *cachePath = [self makeCacheDiskPathWithNameSpace:nameSpace];
+    return [self initWithNamespace:nameSpace diskCacheDirectory:cachePath];
 }
 
 - (id)initWithNamespace:(NSString *)ns diskCacheDirectory:(NSString *)directory{
@@ -70,8 +70,16 @@
         if (directory != nil) {
             _diskCachePath = [directory stringByAppendingPathComponent:fullNamePath];
         }else{
-            _diskCachePath = [self makeDiskPathWithNameSpace:ns];
+            _diskCachePath = [self makeCacheDiskPathWithNameSpace:ns];
         }
+        
+        NSString *documentPath = [self makeDocumentDiskPathWithNameSpace:ns];
+        if (documentPath != nil) {
+            _diskDocumentPath = [documentPath stringByAppendingPathComponent:fullNamePath];
+        }else{
+            _diskDocumentPath = documentPath;
+        }
+        
         
         _memCache = [[TDAutoCleanCache alloc]init];
         _ioQueue = dispatch_queue_create("com.tudoudong.TDImageCache", DISPATCH_QUEUE_SERIAL);
@@ -90,25 +98,51 @@
                                                      name:UIApplicationDidReceiveMemoryWarningNotification
                                                    object:nil];
         
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(cleanExpiredDisk)
-//                                                     name:UIApplicationWillTerminateNotification
-//                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(cleanExpiredDisk)
+                                                     name:UIApplicationWillTerminateNotification
+                                                   object:nil];
+        
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(backgroundCleanDisk)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+
         
     }
     return self;
 }
 
-- (NSString *)makeDiskPathWithNameSpace:(NSString *)nameSpace{
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    
+}
+
+- (NSString *)makeCacheDiskPathWithNameSpace:(NSString *)nameSpace{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     return [paths[0] stringByAppendingPathComponent:nameSpace];
 
 }
 
+- (NSString *)makeDocumentDiskPathWithNameSpace:(NSString *)nameSpace{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    return [paths[0] stringByAppendingPathComponent:nameSpace];
+}
 
 
-- (NSString *)defaultCachePathForKey:(NSString *)key{
-    return [self cachePathForKey:key inCachePath:self.diskCachePath];
+
+- (NSString *)defaultCachePathForKey:(NSString *)key cacheType:(TDImageCacheType)cacheType{
+    if (cacheType == TDImageCacheTypeDocumentDisk){
+        
+        return [self cachePathForKey:key inCachePath:self.diskDocumentPath];
+    }else{
+        
+        return [self cachePathForKey:key inCachePath:self.diskCachePath];
+    }
+    
 }
 
 - (NSString *)cachePathForKey:(NSString *)key inCachePath:(NSString *)cachePath{
@@ -134,7 +168,7 @@
 #pragma mark - TDImageCache
 
 
-- (void)storeImge:(UIImage *)image imageData:(NSData*)imageData forKey:(NSString *)key toDisk:(BOOL)toDisk{
+- (void)storeImge:(UIImage *)image imageData:(NSData*)imageData forKey:(NSString *)key cacheType:(TDImageCacheType)cacheType toDisk:(BOOL)toDisk{
     
     if (self.shouldCacheImagesInMemory) {
         [self.memCache setObject:image forKey:key];
@@ -150,11 +184,20 @@
             
             NSFileManager *filemanager = [NSFileManager defaultManager];
             
-            if (![filemanager fileExistsAtPath:_diskCachePath]) {
-                [filemanager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+            
+            if (cacheType == TDImageCacheTypeCacheDisk) {
+                
+                if (![filemanager fileExistsAtPath:_diskCachePath]) {
+                    [filemanager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+                }
+            }else if (cacheType == TDImageCacheTypeDocumentDisk){
+                
+                if (![filemanager fileExistsAtPath:self.diskDocumentPath]) {
+                    [filemanager createDirectoryAtPath:self.diskDocumentPath withIntermediateDirectories:YES attributes:nil error:NULL];
+                }
             }
             
-            NSString *cachePathForKey = [self defaultCachePathForKey:key];
+            NSString *cachePathForKey = [self defaultCachePathForKey:key cacheType:cacheType];
             [filemanager createFileAtPath:cachePathForKey contents:data attributes:nil];
             
             
@@ -165,12 +208,18 @@
 
 }
 
-- (NSOperation *)queryDiskCacheForKey:(NSString *)key done:(TDImageQueryCompletBlock)doneBlock{
+- (NSOperation *)queryDiskCacheForKey:(NSString *)key
+                            cacheType:(TDImageCacheType)cacheType
+                                 done:(TDImageQueryCompletBlock)doneBlock{
     if (!doneBlock) {
         return nil;
     }
     
     if (!key) {
+        return nil;
+    }
+    
+    if (cacheType == TDImageCacheTypeNone) {
         return nil;
     }
     
@@ -180,6 +229,9 @@
         return nil;
     }
     
+    if (cacheType == TDImageCacheTypeMemory) {
+        return nil;
+    }
     
     NSOperation *operation = [[NSOperation alloc]init];
     
@@ -190,13 +242,13 @@
         
         @autoreleasepool {
             
-            UIImage *diskImage = [self diskImageForKey:key];
+            UIImage *diskImage = [self diskImageForKey:key cacheType:cacheType];
             if (diskImage && self.shouldCacheImagesInMemory) {
                 [self.memCache setObject:diskImage forKey:key];
             }
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                doneBlock(diskImage ,TDImageCacheTypeDisk);
+                doneBlock(diskImage ,cacheType);
             });
         }
         
@@ -212,8 +264,8 @@
 }
 
 
-- (UIImage *)diskImageForKey:(NSString *)key{
-    NSString *cachePath = [self defaultCachePathForKey:key];
+- (UIImage *)diskImageForKey:(NSString *)key cacheType:(TDImageCacheType)cacheType{
+    NSString *cachePath = [self defaultCachePathForKey:key cacheType:cacheType];
     
     NSData *data = [NSData dataWithContentsOfFile:cachePath];
     
@@ -231,13 +283,20 @@
     if (!key) {
         return;
     }
-    NSString *cachePath = [self defaultCachePathForKey:key];
+    
+    NSString *cachePath = [self defaultCachePathForKey:key cacheType:TDImageCacheTypeCacheDisk];
+    NSString *documentPath = [self defaultCachePathForKey:key cacheType:TDImageCacheTypeDocumentDisk];
+    
     if (self.shouldCacheImagesInMemory) {
         [self.memCache removeObjectForKey:key];
     }
     
+    
+    
+    
     dispatch_async(self.ioQueue, ^{
         [self.fileManager removeItemAtPath:cachePath error:nil];
+        [self.fileManager removeItemAtPath:documentPath error:nil];
     });
     
     
@@ -248,7 +307,7 @@
     [self.memCache removeAllObjects];
 }
 
-- (void)clearAllDisk{
+- (void)clearCacheDisk{
     
     dispatch_async(self.ioQueue, ^{
         [self.fileManager removeItemAtPath:self.diskCachePath error:nil];
@@ -258,6 +317,18 @@
                                       error:NULL];
     });
     
+}
+
+- (void)clearDocumentDick{
+    
+    dispatch_async(self.ioQueue, ^{
+        [self.fileManager removeItemAtPath:self.diskDocumentPath error:nil];
+        [self.fileManager createDirectoryAtPath:self.diskDocumentPath
+                    withIntermediateDirectories:YES
+                                     attributes:nil
+                                          error:NULL];
+    });
+
 }
 
 - (void)cleanExpiredDisk{
@@ -332,25 +403,53 @@
 }
 
 
-- (NSUInteger)getDiskSize{
+- (void)backgroundCleanDisk {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return;
+    }
+    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
+    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        // Clean up any unfinished task business by marking where you
+        // stopped or ending the task outright.
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+    
+    // Start the long-running task and return immediately.
+    [self cleanExpiredDiskWithCompleteBlock:^{
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+}
+
+
+
+- (NSUInteger)getCacheDiskSize{
+    
+    return [self getDiskSizeDiskPath:self.diskCachePath];
+}
+
+- (NSUInteger)getDocumentDiskSize{
+    
+    return [self getDiskSizeDiskPath:self.diskDocumentPath];
+}
+
+- (NSUInteger)getDiskSizeDiskPath:(NSString *)diskPath{
+    
     __block NSUInteger fileSize = 0;
     
     dispatch_sync(self.ioQueue, ^{
-        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.diskCachePath];
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:diskPath];
         for (NSString *fileName in fileEnumerator) {
-            NSString *filePath = [self.diskCachePath stringByAppendingPathComponent:fileName];
+            NSString *filePath = [diskPath stringByAppendingPathComponent:fileName];
             NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
             fileSize += [attrs fileSize];
         }
     });
     
     return fileSize;
-    
 }
-
-
-
-
 
 
 
