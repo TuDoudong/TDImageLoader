@@ -146,7 +146,7 @@
                     BOOL cacheOnDisk = !(options & TDImageCacheMemoryOnly);
                     
                     if (image && isfinished) {
-                        [self.imageCache storeImge:image imageData:data forKey:url.absoluteString toDisk:cacheOnDisk];
+                        [self.imageCache storeImge:image imageData:data forKey:url.absoluteString cacheType:cacheType toDisk:cacheOnDisk];
                     }
                     
                     dispatch_main_sync_safe(^{
